@@ -271,7 +271,6 @@ contract SmashBoard_CYC is SmashBoardERC20 {
 
     //constant to simplify conversion of token amounts into integer form
     uint256 public tokenUnit = uint256(10)**decimals;
-    uint public totalCoins;
 
 
     //Declare logging events
@@ -304,7 +303,7 @@ contract SmashBoard_CYC is SmashBoardERC20 {
 
     function mint(address _owner, uint amount) public onlyOwner {
       balances[_owner] += amount;
-      totalCoins += amount;
+      totalSupply += amount;
       emit LogCoinsMinted(_owner, amount);
     }
 }
