@@ -1,0 +1,50 @@
+Using network 'development'.
+
+
+[0m[0m
+[0m  Contract: SmashBoard Broker Test 2[0m
+Contract owner: 0x627306090abab3a6e1400e9345bc60c78a8bef57
+Contract name: SmashBoard Broker
+Decimals: 18
+tokenPrice: 10000000000000000
+pubEnd: 0
+  [32m  ✓[0m[90m check constructor and default params[0m[31m (214ms)[0m
+0x42874bcbea7b97551e0bf71f9693775bd005f76b
+true
+true
+  [32m  ✓[0m[90m should initialize functions and variables to start running[0m[31m (397ms)[0m
+1000000000000000000
+true
+soldBefore: 0
+soldAfter: 10000000000000000000
+10000000000000000000
+  [32m  ✓[0m[90m should buy amount correctly[0m[31m (397ms)[0m
+10000000000000000000
+11000000000000000000
+1000000000000000000
+  [32m  ✓[0m[90m should buy amount correctly from fallback function[0m[31m (178ms)[0m
+account_one_reserved:  0
+account_one_reserved_after:  1000000000000000000
+  [32m  ✓[0m[90m should reserve and deliver tokens[0m[31m (699ms)[0m
+account_one_reserved_after:  1000000000000000000
+balanceSmashBoardBefore:  0
+account_one_reserved_last:  0
+balanceSmashBoardAfter:  1000000000000000000
+  [32m  ✓[0m[90m should deliver tokens[0m[31m (658ms)[0m
+balanceBefore: 0
+pubEnd: 0
+soldBefore: 1000000000000000000
+tokenPrice: 1000000000000000000
+balanceAfter: 1000000000000000000
+soldAfter: 0
+  [32m  ✓[0m[90m should withdrawPUB correctly[0m[31m (818ms)[0m
+true
+true
+1.0000002e+25
+2000000000000000000
+1.0000001e+25 2.0000001e+25
+  [32m  ✓[0m[90m should sweep correctly to send tokens to owner account[0m[31m (1264ms)[0m
+
+
+[92m [0m[32m 8 passing[0m[90m (5s)[0m
+

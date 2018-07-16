@@ -1,54 +1,110 @@
-var SmashBoard = artifacts.require("SmashBoard_CYC");
+var SmashBoard = artifacts.require("SmashBoard");
+var SmashBoard1 = artifacts.require("SmashBoard_Broker");
 var SmashBoard2 = artifacts.require("SmashBoard_CYC2");
 var expectThrow = require('./helper.js');
 
+contract('SmashBoard Test 1',  async (accounts) => {
 
-contract('Smash Board Test CYC',  async (accounts) => {
-
-
-    it("check constructor params", async () => {
+    it("check constructor and default params", async () => {
+      let account_one = accounts[0];
 
       let instance = await SmashBoard.deployed();
       let meta = instance;
 
       //expected values
-      let expectedName = "Smash Board CYC";
+      let expectedName = "SmashBoard";
       let expectedSymbol = "SMB";
       let expectedOwner = 0x627306090abaB3A6e1400e9345bC60c78a8BEf57;
-      let expectedAmount = 1000000000000;
-      let expectedStandard = "ERC20 Smash Board CYC";
+      let expectedStandard = "SmashBoard ERC20";
       let expectedDecimals = 18;
       let expectedTransactionFee = 0;
+      let expectedTotalSupply = 5500000000000000000000000;
 
-      let name=await meta.name();
-      let symbol=await meta.symbol();
-      let owner=await meta.owner();
-      let totalSupply= await meta.totalSupply();
-      let balance = await meta.balanceOf(owner);
-      balance = balance.toNumber();
+      let name = await meta.name();
+      let symbol = await meta.symbol();
+      let owner = await meta.owner();
       let standard = await meta.standard();
       let decimals = await meta.decimals();
       decimals = decimals.toNumber();
       let transactionFee = await meta.transactionFee();
       transactionFee = transactionFee.toNumber();
+      let totalSupply = await meta.totalSupply();
+      totalSupply = totalSupply.toNumber();
+      let brokers = await meta.brokers(account_one);
 
       console.log("Contract owner: " + owner);
       console.log("Contract name: " + name);
       console.log("Token symbol: " + symbol);
       console.log("Total supply: " + totalSupply);
-      console.log("Owner balance: " + balance);
       console.log("Standard: " + standard);
       console.log("Decimals: " + decimals);
       console.log("transactionFee: " +  transactionFee);
+      console.log("brokers[account_one]: " + brokers);
 
       assert.equal(name, expectedName, "Name must be equal than expectedName");
       assert.equal(symbol, expectedSymbol, "Symbol must be equal than expectedSymbol");
       assert.equal(owner, expectedOwner, "Owner must be equal than expectedOwner");
-      assert.equal(totalSupply, expectedAmount, "Total Supply must be equal than expectedAmount");
-      assert.equal(balance, expectedAmount, "Owner balance must be equal than expectedAmount");
+      assert.equal(totalSupply, expectedTotalSupply, "Total Supply must be equal than expectedAmount");
+      assert.equal(brokers, true, "owners of owner must be equal to true")
       assert.equal(standard, expectedStandard, "Standard must be equal to expectedStandard");
       assert.equal(decimals, expectedDecimals, "Decimals must be equal to expectedDecimals");
       assert.equal(transactionFee, expectedTransactionFee, "transactionFee must be equal to expectedTransactionFee");
+
+    });
+
+    it("should sweep correctly to send tokens to owner account", async() => {
+      // Get initial balances of first and second account.
+      let account_one = accounts[0];
+      let account_two = accounts[1];
+
+      let amount = 1000000000000000000000000;
+
+      let instance = await SmashBoard.deployed();
+      let meta = instance;
+
+      let instance2 = await SmashBoard1.deployed();
+      let meta2 = instance2;
+
+      let contract2Addr = meta2.address;
+
+      await meta.mint(account_one, amount);
+
+      await meta.verifyAccount(account_one, true);
+      await meta.verifyAccount(contract2Addr, true);
+
+      await meta.transferTokens(meta2.address, amount);
+
+      let verifiedAccountOne = await meta.verified(account_one);
+      console.log(verifiedAccountOne);
+
+      let verifiedContract2Addr = await meta.verified(contract2Addr);
+      console.log(verifiedContract2Addr);
+
+      let balance = await meta.balanceOf(account_one);
+      let account_one_starting_balance = balance.toNumber();
+      console.log(account_one_starting_balance);
+
+      balance = await meta.balanceOf(contract2Addr);
+      let contract2_balance = balance.toNumber();
+      console.log(contract2_balance);
+
+      await meta2.sweep(meta.address, amount);
+
+      balance = await meta.balanceOf(account_one);
+      let account_one_ending_balance = balance.toNumber();
+
+      balance = await meta.balanceOf(contract2Addr);
+      let contract2_balance_after = balance.toNumber();
+      console.log(contract2_balance_after);
+
+      console.log(account_one_starting_balance, account_one_ending_balance);
+
+      assert.notEqual(account_one_starting_balance, account_one_ending_balance, "starting and ending balance of account one don't have to be equal after sweep");
+
+      assert.equal(account_one_ending_balance, amount, "account_one_ending_balance must be equal to amount")
+      assert.equal(contract2_balance, contract2_balance_after + amount, "contract2_balance must be equal before and after sweep");
+      assert.equal(verifiedAccountOne, true, "verifiedAccountOne must be equal to true");
+      assert.equal(verifiedContract2Addr, true, "verifiedContract2Addr must be equal to true");
 
     });
 
@@ -58,21 +114,32 @@ contract('Smash Board Test CYC',  async (accounts) => {
       let account_one = accounts[0];
       let account_two = accounts[1];
 
-      let amount = 10000;
+      let amount = 100000000000000000000000;
 
       let instance = await SmashBoard.deployed();
       let meta = instance;
 
+      // await meta.verifyAccount(meta.address, true);
+      await meta.verifyAccount(account_two, true);
+
+      let verifiedAccountOne = await meta.verified(account_one);
+      console.log(verifiedAccountOne);
+
+      let verifiedAccountTwo = await meta.verified(account_two);
+      console.log(verifiedAccountTwo);
+
+
       let transactionFeeBefore = await meta.transactionFee();
       transactionFeeBefore = transactionFeeBefore.toNumber();
 
-      let balance = await meta.balanceOf.call(account_one);
+      let balance = await meta.balanceOf(account_one);
       let account_one_starting_balance = balance.toNumber();
 
-      balance = await meta.balanceOf.call(account_two);
+      balance = await meta.balanceOf(account_two);
       let account_two_starting_balance = balance.toNumber();
 
       await meta.setTransactionFee(100);
+
       await meta.transfer(account_two, amount);
 
       let expectedFee = (amount * 100)/1000;
@@ -82,7 +149,7 @@ contract('Smash Board Test CYC',  async (accounts) => {
 
       balance = await meta.balanceOf(account_one);
       let account_one_ending_balance = balance.toNumber();
-
+      console.log(account_one_ending_balance);
       balance = await meta.balanceOf(account_two);
       let account_two_ending_balance = balance.toNumber();
 
@@ -101,7 +168,8 @@ contract('Smash Board Test CYC',  async (accounts) => {
       assert.equal(account_one_starting_balance, account_one_ending_balance + (amount - expectedFee), "Amount wasn't correctly taken from the sender");
       assert.equal(account_two_ending_balance, account_two_starting_balance + (amount - expectedFee), "Amount wasn't correctly sent to the receiver");
       assert.equal(account_two_starting_balance, account_two_ending_balance - (amount - expectedFee), "Amount wasn't correctly sent to the receiver");
-
+      assert.equal(verifiedAccountOne, true, "account_one verified must be equal to true");
+      assert.equal(verifiedAccountTwo, true, "account_two verified must be equal to true");
     });
 
 
@@ -111,18 +179,17 @@ contract('Smash Board Test CYC',  async (accounts) => {
       let account_one = accounts[0];
       let account_two = accounts[1];
 
-      let amount = 10000;
-
+      let amount = 100000000000000000000000;
 
       let instance = await SmashBoard.deployed();
       let meta = instance;
 
-      let allowanceBefore = await meta.allowance(account_one, account_one);
+      let allowanceBefore = await meta.allowance(account_one, account_two);
       allowanceBefore = allowanceBefore.toNumber();
 
-      await meta.approve(account_one, amount);
+      await meta.approve(account_two, amount);
 
-      let allowanceAfter = await meta.allowance(account_one, account_one);
+      let allowanceAfter = await meta.allowance(account_one, account_two);
       allowanceAfter = allowanceAfter.toNumber();
 
       console.log("Allowance Before: " + allowanceBefore);
@@ -142,19 +209,25 @@ contract('Smash Board Test CYC',  async (accounts) => {
       // Get initial balances of first and second account.
       let account_one = accounts[0];
       let account_two = accounts[1];
+      let account_three = accounts[2];
 
-      let amount = 10000;
+      let amount = 100000000000000000000000;
 
       let instance = await SmashBoard.deployed();
       let meta = instance;
 
-      let allowanceBefore = await meta.allowance(account_one, account_one);
+      await meta.verifyAccount(account_three, true);
+
+      let verifiedAccountThree = await meta.verified(account_three);
+      console.log(verifiedAccountThree);
+
+      let allowanceBefore = await meta.allowance(account_one, account_two);
       allowanceBefore = allowanceBefore.toNumber();
 
       let balance_start = await meta.balanceOf(account_one);
       balance_start = balance_start.toNumber();
 
-      let balance_start_2 = await meta.balanceOf(account_two);
+      let balance_start_2 = await meta.balanceOf(account_three);
       balance_start_2 = balance_start_2.toNumber();
 
       let transactionFee = await meta.transactionFee();
@@ -162,15 +235,15 @@ contract('Smash Board Test CYC',  async (accounts) => {
 
       let expectedFee = (amount * transactionFee)/1000;
 
-      await meta.transferFrom(account_one, account_two, amount);
+      await meta.transferFrom(account_one, account_three, amount, {from: account_two});
 
-      let allowanceAfter = await meta.allowance(account_one, account_one);
+      let allowanceAfter = await meta.allowance(account_one, account_two);
       allowanceAfter = allowanceAfter.toNumber();
 
       let balance_end = await meta.balanceOf(account_one);
       balance_end = balance_end.toNumber();
 
-      let balance_end_2 = await meta.balanceOf(account_two);
+      let balance_end_2 = await meta.balanceOf(account_three);
       balance_end_2 = balance_end_2.toNumber();
 
       console.log("Allowance before transfer: " + allowanceBefore);
@@ -186,12 +259,11 @@ contract('Smash Board Test CYC',  async (accounts) => {
       assert.notEqual(balance_start_2, balance_end_2, "account_two starting balance and ending balance don't have to be equal");
       assert.notEqual(allowanceBefore, allowanceAfter, "allowance before and after transfer don't have to be equal");
 
-      assert.equal(balance_end, balance_start - (balance_end_2 - (amount - expectedFee)), "Amount wasn't correctly sent to the receiver");
-      assert.equal(balance_end, balance_start - (amount - expectedFee), "Balance after transfer must to be equal than balance before transfer minus amount transferred");
-      assert.equal(balance_start, balance_end + (amount - expectedFee), "Balance before transfer must to be equal than balance after transfer plus amount transferred");
-      assert.equal(balance_end_2, balance_start_2 + (amount - expectedFee), "Balance after transfer must to be equal than balance before transfer minus amount transferred");
-      assert.equal(balance_start_2, balance_end_2 - (amount - expectedFee), "Balance before transfer must to be equal than balance after transfer plus amount transferred");
-
+      assert.equal(balance_end, balance_start + expectedFee - amount, "Balance after transfer must to be equal than balance before transfer - amount transferred X");
+      assert.equal(balance_start, balance_end + (amount - expectedFee), "Balance before transfer must to be equal than balance after transfer + amount transferred");
+      assert.equal(balance_end_2, balance_start_2 + (amount - expectedFee), "Balance after transfer must to be equal than balance before transfer - amount transferred");
+      assert.equal(balance_start_2, balance_end_2 - (amount - expectedFee), "Balance before transfer must to be equal than balance after transfer + amount transferred");
+      assert.equal(verifiedAccountThree, true, "account_three verified must be equal to true");
     });
 
 
@@ -199,12 +271,12 @@ contract('Smash Board Test CYC',  async (accounts) => {
       let account_one = accounts[0];
       let account_two = accounts[1];
 
-      let amount = 10000;
+      let amount = 10000000000000000000000;
 
       let instance = await SmashBoard.deployed();
       let meta = instance;
 
-      await meta.approve(account_two, amount);
+      // await meta.approve(account_two, amount);
 
       let allowanceBefore = await meta.allowance(account_one, account_two);
       allowanceBefore = allowanceBefore.toNumber();
@@ -222,27 +294,23 @@ contract('Smash Board Test CYC',  async (accounts) => {
       assert.notEqual(account_one, account_two, "account_one have to be different than account_two");
       assert.notEqual(allowanceBefore, allowanceAfter, "balance allowed before don't have to be equal than balance allowed after");
 
-      assert.equal(allowanceBefore, amount, "Allowance must be equal than amount");
-      assert.equal(allowanceAfter, amount_two, "Allowance must be equal than amount");
+      assert.equal(allowanceBefore, 0, "Allowance must be equal than amount");
+      assert.equal(allowanceAfter, amount, "Allowance must be equal than amount");
     });
 
     it("should decrease appproval amount correctly", async () => {
       let account_one = accounts[0];
       let account_two = accounts[1];
 
-      let amount = 20000;
+      let amount = 1000000000000000000000;
 
       let instance = await SmashBoard.deployed();
       let meta = instance;
 
-      await meta.approve(account_two, amount);
-
       let allowanceBefore = await meta.allowance(account_one, account_two);
       allowanceBefore = allowanceBefore.toNumber();
 
-      let amount_two = amount / 2;
-
-      await meta.decreaseApproval(account_two, amount_two);
+      await meta.decreaseApproval(account_two, amount);
 
       let allowanceAfter = await meta.allowance(account_one, account_two);
       allowanceAfter = allowanceAfter.toNumber();
@@ -253,8 +321,8 @@ contract('Smash Board Test CYC',  async (accounts) => {
       assert.notEqual(account_one, account_two, "account_one have to be different than account_two");
       assert.notEqual(allowanceBefore, allowanceAfter, "balance allowed before don't have to be equal than balance allowed after")
 
-      assert.equal(allowanceBefore, amount, "Allowance must be equal than amount");
-      assert.equal(allowanceAfter, amount_two, "Allowance must be equal than amount");
+      assert.equal(allowanceBefore, 10000000000000000000000, "Allowance must be equal than amount");
+      assert.equal(allowanceAfter, 10000000000000000000000 - amount, "Allowance must be equal than amount");
 
     });
 
@@ -272,6 +340,11 @@ contract('Smash Board Test CYC',  async (accounts) => {
 
       let contractAddress = instance_two.address;
 
+      await meta.verifyAccount(contractAddress, true);
+
+      let verifiedContractAddress = await meta.verified(contractAddress);
+      console.log(verifiedContractAddress);
+
       let allowanceBefore = await meta.allowance(account_one, contractAddress);
       allowanceBefore = allowanceBefore.toNumber();
 
@@ -288,6 +361,7 @@ contract('Smash Board Test CYC',  async (accounts) => {
       assert.notEqual(allowanceBefore, allowanceAfter, "allowanceBefore approveAndCall don't have to be equal than allowanceAfter");
 
       assert.equal(allowanceAfter, amount, "Allowance must be equal than amount after approveAndCall function");
+      assert.equal(verifiedContractAddress, true, "contractAddress verified must be equal to true");
     });
 
     it("should freezeAccount correctly", async () => {
@@ -332,6 +406,8 @@ contract('Smash Board Test CYC',  async (accounts) => {
 
       assert.equal(account_one_starting_balance, account_one_ending_balance, "Amount wasn't correctly taken from the sender");
       assert.equal(account_two_starting_balance, account_two_ending_balance, "Amount wasn't correctly taken from the sender");
+      assert.equal(frozenBefore, false, "frozen bool before frozenAccount must be equal to false");
+      assert.equal(frozenAfter, true, "frozen bool after frozenAccount must be equal to true");
 
     });
 
@@ -342,21 +418,26 @@ contract('Smash Board Test CYC',  async (accounts) => {
       let account_two = accounts[1];
       let account_three = accounts[3];
 
-      let amount = 10000;
+      let amount = 10000000000000000000000;
 
       let instance = await SmashBoard.deployed();
       let meta = instance;
 
+      await meta.verifyAccount(account_three, true);
+
+      let verifiedAccountThree = await meta.verified(account_three);
+      console.log(verifiedAccountThree);
+
       let transactionFee = await meta.transactionFee();
       transactionFee = transactionFee.toNumber();
 
-      let balance = await meta.balanceOf.call(account_one);
+      let balance = await meta.balanceOf(account_one);
       let account_one_starting_balance = balance.toNumber();
 
-      balance = await meta.balanceOf.call(account_two);
+      balance = await meta.balanceOf(account_two);
       let account_two_starting_balance = balance.toNumber();
 
-      balance = await meta.balanceOf.call(account_three);
+      balance = await meta.balanceOf(account_three);
       let account_three_starting_balance = balance.toNumber();
 
       let frozenBefore = await meta.frozenAccount(account_two);
@@ -381,7 +462,6 @@ contract('Smash Board Test CYC',  async (accounts) => {
       console.log("Account Two Balances: " + account_two_starting_balance, account_two_ending_balance);
       console.log("Account Three Balances: " + account_three_starting_balance, account_three_ending_balance);
 
-
       console.log(expectedFee);
 
       console.log(frozenBefore, frozenAfter);
@@ -390,6 +470,7 @@ contract('Smash Board Test CYC',  async (accounts) => {
       assert.notEqual(account_one_starting_balance, account_one_ending_balance, "account_one starting balance and ending balance don't have to be equal");
       assert.notEqual(account_two_starting_balance, account_two_ending_balance, "account_two starting balance and ending balance don't have to be equal");
       assert.notEqual(account_three_starting_balance, account_three_ending_balance, "account_three starting balance and ending balance don't have to be equal");
+      assert.notEqual(frozenBefore, frozenAfter, "frozen boolean before and afer unfreeze account don't have to be equal");
 
       assert.equal(transactionFee, 100, "transactionFee must be equal to 100");
       assert.equal(account_one_ending_balance, account_one_starting_balance + expectedFee, "Fee wasn't correctly sent to the owner");
@@ -397,6 +478,9 @@ contract('Smash Board Test CYC',  async (accounts) => {
       assert.equal(account_two_ending_balance, account_two_starting_balance - amount, "Amount wasn't correctly sent to the receiver");
       assert.equal(account_two_starting_balance, account_two_ending_balance + amount, "Amount wasn't correctly sent to the receiver");
       assert.equal(account_three_ending_balance, amount - expectedFee, "Account three balance after transfer must be equal to amount - expectedFee");
+      assert.equal(verifiedAccountThree, true, "account_three verified must be equal to true");
+      assert.equal(frozenBefore, true, "frozen bool before frozenAccount must be equal to true");
+      assert.equal(frozenAfter, false, "frozen bool after frozenAccount must be equal to false");
 
     });
 
@@ -407,13 +491,12 @@ contract('Smash Board Test CYC',  async (accounts) => {
       let account_two = accounts[1];
       let account_three = accounts[3];
 
-      let amount = 10000;
+      let amount = 100000000000000000000000;
 
       let instance = await SmashBoard.deployed();
       let meta = instance;
 
-
-      let balance = await meta.balanceOf.call(account_one);
+      let balance = await meta.balanceOf(account_one);
       let account_one_starting_balance = balance.toNumber();
 
       let totalSupplyBefore = await meta.totalSupply();
@@ -435,54 +518,139 @@ contract('Smash Board Test CYC',  async (accounts) => {
       assert.notEqual(totalSupplyBefore, totalSupplyAfter, "totalSupply before and after mint don't have to be equal");
 
       assert.equal(account_one_ending_balance, account_one_starting_balance + amount, "Amount wasn't correctly sent to the owner");
-      assert.equal(totalSupplyAfter, totalSupplyBefore + amount, "totalSupply after mint must be equal to totalSupply before + amount");
-
+      assert.equal(totalSupplyAfter, (totalSupplyBefore + amount), "totalSupply after mint must be equal to totalSupply before + amount");
 
     });
 
-    it("should sweep correctly", async () => {
+    it("should revoke verified account", async () => {
 
       // Get initial balances of first and second account.
       let account_one = accounts[0];
       let account_two = accounts[1];
-      let account_three = accounts[4];
-
-      let amount = 10000;
 
       let instance = await SmashBoard.deployed();
       let meta = instance;
 
-      let instance_two = await SmashBoard2.deployed();
-      let meta2 = instance_two;
+      let verifiedAccountTwoBefore = await meta.verified(account_two);
+      console.log(verifiedAccountTwoBefore);
 
-      await meta2.transfer(meta.address, 1000000, {from:account_three});
+      await meta.verifyAccount(account_two, false);
 
-      let balanceBefore = await meta2.balanceOf(meta.address);
-      balanceBefore = balanceBefore.toNumber();
+      let verifiedAccountTwoAfter = await meta.verified(account_two);
+      console.log(verifiedAccountTwoAfter);
 
-      let ownerBalanceBefore = await meta2.balanceOf(account_one);
-      ownerBalanceBefore = ownerBalanceBefore.toNumber();
+      let balanceAccountTwo = await meta.balanceOf(account_two);
+      balanceAccountTwo = balanceAccountTwo.toNumber();
+      console.log(balanceAccountTwo);
 
-      await meta.sweep(instance_two.address, amount);
+      let tx2 = meta.transfer(account_one, 1000, {from:account_two});;
+      await expectThrow(tx2);
 
-      let balanceAfter = await meta2.balanceOf(meta.address);
-      balanceAfter = balanceAfter.toNumber();
-      console.log(balanceBefore, balanceAfter);
+      console.log(tx2);
 
-      let ownerBalanceAfter = await meta2.balanceOf(account_one);
-      ownerBalanceAfter = ownerBalanceAfter.toNumber();
-      console.log(ownerBalanceBefore, ownerBalanceAfter);
+      let balanceAccountTwoAfter = await meta.balanceOf(account_two);
+      balanceAccountTwoAfter = balanceAccountTwoAfter.toNumber();
+      console.log(balanceAccountTwoAfter);
 
-      console.log(meta.address, meta2.address);
+      assert.equal(verifiedAccountTwoBefore, true, "account_two verified must be equal to true before change it with verifyAccount function");
+      assert.equal(verifiedAccountTwoAfter, false, "account_two verified must be equal to false after change it with verifyAccount function");
+      assert.equal(balanceAccountTwo, balanceAccountTwoAfter, "balanceAccountTwo must be equal to balanceAccountTwoAfter");
 
-      assert.notEqual(meta.address, meta2.address, "meta and meta2 addresses don't have to be equal");
-      assert.notEqual(balanceBefore, balanceAfter, "balanceBefore and balanceAfter from meta2 don't have to be equal");
-      assert.notEqual(ownerBalanceBefore, ownerBalanceAfter, "ownerBalance from meta2 don't have to be equal")
+    });
 
-      assert.equal(balanceAfter, balanceBefore - amount, "balanceAfter must be equal to balanceBefore - amount");
-      assert.equal(balanceBefore, balanceAfter + amount, "balanceBefore must be equal to balanceBefore + amount");
-      assert.equal(ownerBalanceAfter, amount, "ownerBalanceAfter must be equal to amount");
+    it("should transferTokens correctly", async () => {
 
+      // Get initial balances of first and second account.
+      let account_one = accounts[0];
+      let account_two = accounts[1];
+
+      let instance = await SmashBoard.deployed();
+      let meta = instance;
+
+      let amount = 10000000000000000000000;
+      await meta.verifyAccount(account_two, true);
+
+      let balanceAccountOne = await meta.balanceOf(account_one);
+      balanceAccountOne = balanceAccountOne.toNumber();
+      console.log(balanceAccountOne);
+
+      let balanceAccountTwo = await meta.balanceOf(account_two);
+      balanceAccountTwo = balanceAccountTwo.toNumber();
+      console.log(balanceAccountTwo);
+
+      await meta.setBrokers(account_two, true);
+
+      let account_two_is_owner = await meta.brokers(account_two);
+      console.log(account_two_is_owner);
+
+      await meta.transfer(account_one, amount, {from:account_two});;
+
+      let balanceAccountTwoAfter = await meta.balanceOf(account_two);
+      balanceAccountTwoAfter = balanceAccountTwoAfter.toNumber();
+      console.log(balanceAccountTwoAfter);
+
+      let balanceAccountOneAfter = await meta.balanceOf(account_one);
+      balanceAccountOneAfter = balanceAccountOneAfter.toNumber();
+      console.log(balanceAccountOneAfter);
+
+      assert.notEqual(balanceAccountOne, balanceAccountOneAfter, "account_one balance don't have to be equal after transfer");
+      assert.notEqual(balanceAccountTwo, balanceAccountTwoAfter, "account_two balance don't have to be equal after transfer");
+
+      assert.equal(account_two_is_owner, true, "account_two owner bool value must be equal to true");
+      assert.equal(balanceAccountTwoAfter, balanceAccountTwo - amount, "account_two balance must be equal to balance before - amount");
+      assert.equal(balanceAccountOneAfter, balanceAccountOne + amount, "account_two balance must be equal to balance before - amount");
+    });
+
+    it("should reserveTokens correctly", async () => {
+
+      // Get initial balances of first and second account.
+      let account_one = accounts[0];
+      let account_seven = accounts[6];
+
+      let instance = await SmashBoard.deployed();
+      let meta = instance;
+
+      let amount = 10000000000000000000000;
+      await meta.verifyAccount(account_seven, true);
+
+      let reservedBefore = await meta.reserve(account_seven);
+      reservedBefore = reservedBefore.toNumber();
+
+      await meta.reserveTokens(account_seven, amount);
+
+      let reservedAfter = await meta.reserve(account_seven);
+      reservedAfter = reservedAfter.toNumber();
+
+      console.log(reservedBefore, reservedAfter);
+      assert.notEqual(reservedBefore, reservedAfter, "reserved amount before and after don't have to be equal");
+
+      assert.equal(reservedAfter, amount, "reserved amount after must be equal to amount");
+    });
+
+    it("should withdrawTokens correctly", async () => {
+
+      // Get initial balances of first and second account.
+      let account_one = accounts[0];
+      let account_seven = accounts[6];
+
+      let instance = await SmashBoard.deployed();
+      let meta = instance;
+
+      let amount = 1000000000000000000000;
+      await meta.verifyAccount(account_seven, true);
+
+      let reservedBefore = await meta.reserve(account_seven);
+      reservedBefore = reservedBefore.toNumber();
+
+      await meta.withdrawTokens(account_seven, amount);
+
+      let reservedAfter = await meta.reserve(account_seven);
+      reservedAfter = reservedAfter.toNumber();
+
+      console.log(reservedBefore, reservedAfter);
+      assert.notEqual(reservedBefore, reservedAfter, "reserved amount before and after don't have to be equal");
+
+      assert.equal(reservedAfter, reservedBefore - amount, "reserved amount after must be equal to amount");
     });
 
 });

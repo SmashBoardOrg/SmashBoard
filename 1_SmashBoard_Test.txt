@@ -1,0 +1,112 @@
+Using network 'development'.
+
+
+[0m[0m
+[0m  Contract: SmashBoard Test 1[0m
+Contract owner: 0x627306090abab3a6e1400e9345bc60c78a8bef57
+Contract name: SmashBoard
+Token symbol: SMB
+Total supply: 5.5e+24
+Standard: SmashBoard ERC20
+Decimals: 18
+transactionFee: 0
+brokers[account_one]: true
+  [32m  ✓[0m[90m check constructor and default params[0m[31m (206ms)[0m
+true
+true
+0
+1e+24
+0
+0 1e+24
+  [32m  ✓[0m[90m should sweep correctly to send tokens to owner account[0m[31m (469ms)[0m
+true
+true
+9.1e+23
+Account One Balances: 1e+24 9.1e+23
+Account Two Balances: 0 9e+22
+0 100
+9.999999999999998e+21
+  [32m  ✓[0m[90m should transfer coin correctly and send fee to owner[0m[31m (383ms)[0m
+Allowance Before: 0
+Allowance After: 1e+23
+  [32m  ✓[0m[90m should approve amount correctly[0m[31m (153ms)[0m
+true
+Allowance before transfer: 1e+23
+Allowance after transfer: 0
+Sender Balance Start: 9.1e+23
+Receiver Balance Start: 0
+Sender Balance End: 8.2e+23
+Receiver Balance End: 9e+22
+transactionFee: 100
+  [32m  ✓[0m[90m should transferFrom amount correctly and send fee to the owner[0m[31m (390ms)[0m
+Balance before increaseApproval: 0
+Balance after increaseApproval: 1e+22
+  [32m  ✓[0m[90m should increase appproval amount correctly[0m[31m (110ms)[0m
+Balance before decreaseApproval: 1e+22
+Balance after decreaseApproval: 9e+21
+  [32m  ✓[0m[90m should decrease appproval amount correctly[0m[31m (176ms)[0m
+true
+Balance allowed after approveAndCall: 20000
+  [32m  ✓[0m[90m should approve and communicate the approved correctly[0m[31m (287ms)[0m
+Account One Balances: 8.2e+23 8.2e+23
+Account Two Balances: 9e+22 9e+22
+Promise {
+  <rejected> Error: VM Exception while processing transaction: revert
+    at Object.InvalidResponse (/usr/lib/node_modules/truffle/build/webpack:/~/web3/lib/web3/errors.js:38:1)
+    at /usr/lib/node_modules/truffle/build/webpack:/~/web3/lib/web3/requestmanager.js:86:1
+    at /usr/lib/node_modules/truffle/build/webpack:/~/truffle-provider/wrapper.js:134:1
+    at XMLHttpRequest.request.onreadystatechange (/usr/lib/node_modules/truffle/build/webpack:/~/web3/lib/web3/httpprovider.js:128:1)
+    at XMLHttpRequestEventTarget.dispatchEvent (/usr/lib/node_modules/truffle/build/webpack:/~/xhr2/lib/xhr2.js:64:1)
+    at XMLHttpRequest._setReadyState (/usr/lib/node_modules/truffle/build/webpack:/~/xhr2/lib/xhr2.js:354:1)
+    at XMLHttpRequest._onHttpResponseEnd (/usr/lib/node_modules/truffle/build/webpack:/~/xhr2/lib/xhr2.js:509:1)
+    at IncomingMessage.<anonymous> (/usr/lib/node_modules/truffle/build/webpack:/~/xhr2/lib/xhr2.js:469:1)
+    at emitNone (events.js:111:20)
+    at IncomingMessage.emit (events.js:208:7)
+    at endReadableNT (_stream_readable.js:1064:12)
+    at _combinedTickCallback (internal/process/next_tick.js:138:11)
+    at process._tickCallback (internal/process/next_tick.js:180:9) }
+  [32m  ✓[0m[90m should freezeAccount correctly[0m[31m (293ms)[0m
+true
+Account One Balances: 8.2e+23 8.21e+23
+Account Two Balances: 9e+22 8e+22
+Account Three Balances: 0 9e+21
+1e+21
+true false
+  [32m  ✓[0m[90m should unfreezeAccount correctly[0m[31m (612ms)[0m
+6.5e+24 6.6e+24
+Account One Balances: 8.21e+23 9.21e+23
+  [32m  ✓[0m[90m should mint correctly[0m[31m (232ms)[0m
+true
+false
+8e+22
+Promise {
+  <rejected> Error: VM Exception while processing transaction: revert
+    at Object.InvalidResponse (/usr/lib/node_modules/truffle/build/webpack:/~/web3/lib/web3/errors.js:38:1)
+    at /usr/lib/node_modules/truffle/build/webpack:/~/web3/lib/web3/requestmanager.js:86:1
+    at /usr/lib/node_modules/truffle/build/webpack:/~/truffle-provider/wrapper.js:134:1
+    at XMLHttpRequest.request.onreadystatechange (/usr/lib/node_modules/truffle/build/webpack:/~/web3/lib/web3/httpprovider.js:128:1)
+    at XMLHttpRequestEventTarget.dispatchEvent (/usr/lib/node_modules/truffle/build/webpack:/~/xhr2/lib/xhr2.js:64:1)
+    at XMLHttpRequest._setReadyState (/usr/lib/node_modules/truffle/build/webpack:/~/xhr2/lib/xhr2.js:354:1)
+    at XMLHttpRequest._onHttpResponseEnd (/usr/lib/node_modules/truffle/build/webpack:/~/xhr2/lib/xhr2.js:509:1)
+    at IncomingMessage.<anonymous> (/usr/lib/node_modules/truffle/build/webpack:/~/xhr2/lib/xhr2.js:469:1)
+    at emitNone (events.js:111:20)
+    at IncomingMessage.emit (events.js:208:7)
+    at endReadableNT (_stream_readable.js:1064:12)
+    at _combinedTickCallback (internal/process/next_tick.js:138:11)
+    at process._tickCallback (internal/process/next_tick.js:180:9) }
+8e+22
+  [32m  ✓[0m[90m should revoke verified account[0m[31m (178ms)[0m
+9.21e+23
+8e+22
+true
+7e+22
+9.31e+23
+  [32m  ✓[0m[90m should transferTokens correctly[0m[31m (368ms)[0m
+0 1e+22
+  [32m  ✓[0m[90m should reserveTokens correctly[0m[31m (163ms)[0m
+1e+22 9e+21
+  [32m  ✓[0m[90m should withdrawTokens correctly[0m[31m (264ms)[0m
+
+
+[92m [0m[32m 15 passing[0m[90m (5s)[0m
+
