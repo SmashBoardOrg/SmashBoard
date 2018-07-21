@@ -2,12 +2,12 @@ Using network 'development'.
 
 
 [0m[0m
-[0m  Contract: SmashBoard Test 3[0m
-0x7a62adccaacfc5f7842f49fcb8342e999e955a28
+[0m  Contract: SmashBoard Test[0m
+0xe9b0db4f6778b89ccd9fc67c0cccb39a87afd29f
 true
 true
-  [32m  ✓[0m[90m should initialize functions and variables to start running[0m[31m (392ms)[0m
-Taboow Broker address should be allowed to reserveTokens
+  [32m  ✓[0m[90m should initialize functions and variables to start running[0m[31m (326ms)[0m
+SmashBoard Broker address should be allowed to reserveTokens
 false
 true
 false
@@ -28,8 +28,7 @@ Promise {
     at _combinedTickCallback (internal/process/next_tick.js:138:11)
     at process._tickCallback (internal/process/next_tick.js:180:9) }
 0
-  [32m  ✓[0m[90m checks that calls throws revert[0m[31m (450ms)[0m
+  [32m  ✓[0m[90m checks that calls throws revert[0m[31m (317ms)[0m
 
 
-[92m [0m[32m 2 passing[0m[90m (981ms)[0m
-
+[92m [0m[32m 2 passing[0m[90m (756ms)[0m

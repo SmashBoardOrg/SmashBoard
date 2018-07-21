@@ -3,7 +3,7 @@ var SmashBoard1 = artifacts.require("SmashBoard_Broker");
 var SmashBoard2 = artifacts.require("SmashBoard_CYC2");
 var expectThrow = require('./helper.js');
 
-contract('SmashBoard Broker Test 2',  async (accounts) => {
+contract('SmashBoard Test',  async (accounts) => {
 
     it("check constructor and default params", async () => {
       let account_one = accounts[0];
@@ -46,7 +46,7 @@ contract('SmashBoard Broker Test 2',  async (accounts) => {
       assert.equal(pubEnd, expectedPubEnd, "pubEnd must be equal than expectedPubEnd");
       assert.equal(tokenPrice, expectedTokenPrice, "tokenPrice must be equal than expectedTokenPrice");
       assert.equal(addrFWD, expectedAddrFWD, "addrFWD must be equal than expectedAddrFWD");
-      assert.equal(smashBoardAddr, expectedToken, "taboowAddr must be equal to expectedToken");
+      assert.equal(smashBoardAddr, expectedToken, "smashBoardAddr must be equal to expectedToken");
     });
 
     it("should initialize functions and variables to start running", async () => {
@@ -165,7 +165,7 @@ contract('SmashBoard Broker Test 2',  async (accounts) => {
 
     });
 
-    it("should reserve and deliver tokens", async () => {
+    it("should reserve tokens", async () => {
       let account_one = accounts[0];
 
       let instance = await SmashBoard1.deployed();
@@ -174,7 +174,7 @@ contract('SmashBoard Broker Test 2',  async (accounts) => {
       let instance_two = await SmashBoard.deployed();
       let meta_two = instance_two;
 
-      let amount = 1000000000000000000;
+      let amount = 100000000000000000000;
 
       let contract2Addr = meta_two.address;
 
@@ -213,7 +213,7 @@ contract('SmashBoard Broker Test 2',  async (accounts) => {
       let instance_two = await SmashBoard.deployed();
       let meta_two = instance_two;
 
-      let amount = 1000000000000000000;
+      let amount = 100000000000000000000;
 
       let contract2Addr = meta_two.address;
 
@@ -226,7 +226,7 @@ contract('SmashBoard Broker Test 2',  async (accounts) => {
       account_one_reserved_after = account_one_reserved_after.toNumber();
       console.log("account_one_reserved_after: ", account_one_reserved_after);
 
-      let balanceSmashBoardBefore = await meta_two.balanceOf(account_one);
+      let balanceSmashBoardBefore = await meta_two.balanceOf(meta.address);
       balanceSmashBoardBefore = balanceSmashBoardBefore.toNumber();
       console.log("balanceSmashBoardBefore: ", balanceSmashBoardBefore);
 
@@ -236,17 +236,18 @@ contract('SmashBoard Broker Test 2',  async (accounts) => {
       account_one_reserved_last = account_one_reserved_last.toNumber();
       console.log("account_one_reserved_last: ", account_one_reserved_last);
 
-      let balanceSmashBoardAfter = await meta_two.balanceOf(account_one);
+      let balanceSmashBoardAfter = await meta_two.balanceOf(meta.address);
       balanceSmashBoardAfter = balanceSmashBoardAfter.toNumber();
       console.log("balanceSmashBoardAfter: ", balanceSmashBoardAfter);
 
+      console.log(balanceSmashBoardBefore, balanceSmashBoardAfter);
       assert.notEqual(balanceSmashBoardBefore, balanceSmashBoardAfter, "account balance of SmashBoard Contract don't have to be equal before and after deliver tokens");
 
       assert.equal(account_one_reserved_after, amount, "amount reserved must be equal to amount given");
-      assert.equal(balanceSmashBoardAfter, amount, "account balance of SmashBoard Contract must be equal to amount given");
-      assert.equal(account_one_reserved_after, balanceSmashBoardAfter, "amount reserved must be equal to account balance");
+      assert.equal(balanceSmashBoardAfter, balanceSmashBoardBefore - amount, "account balance of SmashBoard Contract must be equal to amount given");
+      assert.equal(account_one_reserved_last, balanceSmashBoardAfter, "amount reserved must be equal to account balance");
       assert.equal(account_one_reserved_last, 0, "account_one_reserved_last must be equal to 0");
-      assert.equal(balanceSmashBoardBefore, 0, "balanceSmashBoardBefore must be equal to 0");
+      assert.equal(balanceSmashBoardBefore, 100000000000000000000, "balanceSmashBoardBefore must be equal to 0");
     });
 
     it("should withdrawPUB correctly", async () => {

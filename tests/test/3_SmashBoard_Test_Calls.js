@@ -3,7 +3,7 @@ var SmashBoard1 = artifacts.require("SmashBoard_Broker");
 var SmashBoard2 = artifacts.require("SmashBoard_CYC2");
 var expectThrow = require('./helper.js');
 
-contract('SmashBoard Test 3',  async (accounts) => {
+contract('SmashBoard Test',  async (accounts) => {
 
   it("should initialize functions and variables to start running", async () => {
        let account_one = accounts[0];
@@ -35,7 +35,7 @@ contract('SmashBoard Test 3',  async (accounts) => {
 
        assert.equal(isVerifiedOne, true, "account_one verification must be equal to true");
        assert.equal(isVerifiedTwo, true, "account_two verification must be equal to true");
-       assert.equal(smashBoardAddr, smbAddr, "tbwAddr must be equal to smashBoardAddr");
+       assert.equal(smashBoardAddr, smbAddr, "smbAddr must be equal to smashBoardAddr");
 
      });
 
@@ -50,7 +50,7 @@ contract('SmashBoard Test 3',  async (accounts) => {
     let instance1 = await SmashBoard.deployed();
     let meta1 = instance1;
 
-    console.log("Taboow Broker address should be allowed to reserveTokens");
+    console.log("SmashBoard Broker address should be allowed to reserveTokens");
 
     let owned = await meta1.brokers(meta.address);
     console.log(owned);
