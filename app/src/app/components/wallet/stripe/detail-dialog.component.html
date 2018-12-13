@@ -1,0 +1,38 @@
+<div>
+    <h1 class="text-center">Confirm donation <img class="right pointer" src="~icons/cross_icon.svg" (click)="closeDialog()"></h1>
+</div>
+<div class="margin">
+    <div class="flex-row dist">
+        <div class="flex1">
+            <p class="black">Card Number</p>
+            <p>{{data.data.showNumber}}</p>
+        </div>
+        <div class="flex1 extra">
+            <p class="black">Card Type</p>
+            <p>{{data.data.type}}</p>
+        </div>
+        <div class="flex1">
+            <p class="black">Expiration Date</p>
+            <p>{{data.data.exp_month}}/{{data.data.exp_year}}</p>
+        </div>
+        <div class="flex1">
+            <p class="black">CVC</p>
+            <p>{{data.data.cvc}}</p>
+        </div>
+    </div>
+
+    <div class="flex-row dist">
+        <div class="flex1">
+            <p class="black">Amount</p>
+            <p>{{data.data.amount}} €</p>
+        </div>
+
+    </div>
+</div>
+
+<div *ngIf="!insufficient">
+    <div class="buttons">
+        <button class="btn-black half left" (click)="closeDialog()">Cancel</button>
+        <button *ngIf="data.action != 'contractDeploy' && data.action != 'withdraw'" class="btn-inverse half right" (click)="send()">Send</button>
+    </div>
+</div>

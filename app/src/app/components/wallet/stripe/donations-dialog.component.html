@@ -1,0 +1,41 @@
+<div>
+    <h1 class="text-center">My donations <img class="right pointer" src="~icons/cross_icon.svg" (click)="closeDialog()"></h1>
+</div>
+<div id="selectList" class="round scroll scrollbar">
+    <ul *ngIf="myDonations.length != null">
+        <li *ngFor="let donation of myDonations">
+            <div>
+                <p class="title width inlineBlock">{{donation.date}}</p><span class="bold">{{donation.time}}</span>
+            </div>
+            <div>
+                <p class="title width inlineBlock">{{donation.type}} Number:</p><span class="">{{donation.number}}</span>
+            </div>
+            <div>
+                <p class="title width inlineBlock">Donation ID:</p><span class="">{{donation.charge_id}}</span>
+            </div>
+            <div>
+                <p class="title width inlineBlock">Amount:</p><span class="">{{donation.amount | number:'1.2':'en'}} €</span>
+            </div>
+        </li>
+    </ul>
+    <ul *ngIf="myDonations.length == null">
+        <li>
+            <div>
+                <p class="title width inlineBlock">{{myDonations.date}}</p><span class="bold">{{myDonations.time}}</span>
+            </div>
+            <div>
+                <p class="title width inlineBlock">{{myDonations.type}} Number:</p><span class="">{{myDonations.number}}</span>
+            </div>
+            <div>
+                <p class="title width inlineBlock">Donation ID:</p><span class="">{{myDonations.charge_id}}</span>
+            </div>
+            <div>
+                <p class="title width inlineBlock">Amount:</p><span class="">{{myDonations.amount | number:'1.2':'en'}} €</span>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<div class="buttons">
+    <button class="btn-black right" (click)="closeDialog()">Back</button>
+</div>

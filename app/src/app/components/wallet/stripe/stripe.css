@@ -1,0 +1,22 @@
+.NaN::-webkit-inner-spin-button,
+.NaN::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.testClass input[type=number] {
+    -moz-appearance: textfield;
+}
+
+input,
+.input {
+    height: auto !important;
+}
+
+.amount {
+    width: 200px;
+}
+
+.input-container span {
+    cursor: default;
+}

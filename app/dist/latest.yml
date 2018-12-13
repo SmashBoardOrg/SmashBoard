@@ -1,0 +1,8 @@
+version: 1.0.0
+files:
+  - url: SmashBoard-Setup-1.0.0.exe
+    sha512: iMEqhy5HCsaBKUA/nbwvC5ll1zSn4Baq2m9DVaiZSvCoSBxASLfS+7SBppncMMG8foE2Pz80Sw7fpO47V9/eog==
+    size: 48736719
+path: SmashBoard-Setup-1.0.0.exe
+sha512: iMEqhy5HCsaBKUA/nbwvC5ll1zSn4Baq2m9DVaiZSvCoSBxASLfS+7SBppncMMG8foE2Pz80Sw7fpO47V9/eog==
+releaseDate: '2018-12-13T10:05:51.462Z'

@@ -1,0 +1,5 @@
+owner: SmashBoardOrg
+repo: SmashBoard
+provider: github
+releaseType: draft
+publishAutoUpdate: true

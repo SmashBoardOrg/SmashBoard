@@ -1,0 +1,35 @@
+<div class="backWhite">
+    <h2 class="extra smash-secondary-color inlineBlock">Card payent information:</h2>
+
+    <form (ngSubmit)="pay()" #form="ngForm" class="dist2">
+        <div>
+            <md-input-container class="testClass extra">
+                <input type="text" class="NaN inlineBlock" required mdInput placeholder="Card Number" [(ngModel)]="cardNumber" name="card" [formControl]="cardControl" maxlength="19" (keypress)="formatCreditCardNumber($event)">
+            </md-input-container>
+        </div>
+        <div>
+            <md-input-container class="testClass extra">
+                <input type="number" class="NaN inlineBlock" required mdInput placeholder="Expiration Month" [(ngModel)]="month" name="month" [formControl]="monthsControl">
+                <md-error>Please enter a value between 1 and 12</md-error>
+            </md-input-container>
+            <span>/</span>
+            <md-input-container class="testClass extra">
+                <input type="number" class="NaN inlineBlock" required mdInput placeholder="Expiration Year" [(ngModel)]="year" name="year" [formControl]="yearControl">
+                <md-error>Please enter a valid expiration year</md-error>
+            </md-input-container>
+            <md-input-container class="testClass extra">
+                <input type="number" class="NaN inlineBlock" required mdInput placeholder="CVC" [(ngModel)]="cvc" name="cvc1">
+            </md-input-container>
+        </div>
+        <div class="dist">
+            <md-input-container class="testClass extra">
+                <input type="number" class="NaN inlineBlock" required mdInput placeholder="Amount" [(ngModel)]="amount" name="amount" [formControl]="amountControl">
+                <md-error>Can not send less than 50 cents</md-error>
+            </md-input-container>
+
+        </div>
+
+        <button type="submit" class="btn-solid right distDown donate"> Donate </button>
+    </form>
+    <h3 *ngIf="myDonations != null" class="dist extra smash-secondary-color donate pointer underline inlineBlock" (click)="openDonationsDialog()">My donations</h3>
+</div>
