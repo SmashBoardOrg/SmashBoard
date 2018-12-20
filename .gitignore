@@ -1,7 +1,5 @@
-/build
-/releases
-/node_modules
-/dist
+/app/build
+/app/releases
+/app/node_modules
+/app/dist
 package-lock.json
-.vscode
-.DS_Store
