@@ -1,8 +1,7 @@
-/wallet/build
-/wallet/releases
-/wallet/node_modules
-/wallet/dist
-/wallet/package-lock.json
-/wallet/.vscode
-/wallet/.DS_Store
-
+/app/build
+/app/releases
+/app/node_modules
+/app/dist
+/app/package-lock.json
+/app/.vscode
+/app/.DS_Store

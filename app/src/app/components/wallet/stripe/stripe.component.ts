@@ -68,6 +68,15 @@ export class StripePage implements OnInit {
 
     async ngOnInit() {
       if(this._web3.network.chain != 1){
+        let date = new Date;
+        let num = date.getFullYear().toString();
+        let year = num.substr(2,3);
+        this.minYear = Number(year);
+        
+        this.monthsControl = new FormControl("", [Validators.max(12), Validators.min(1)]);
+        this.yearControl = new FormControl("",[Validators.min(this.minYear)]);
+        this.cardControl = new FormControl("", [Validators.maxLength(19),Validators.minLength(17)]);
+        this.amountControl = new FormControl("",[Validators.min(0.5)]);
         Promise.resolve().then(() => { 
           this.dialogRef = this.dialog.open(NetworkDialogComponent, {
               width: '660px',

@@ -1,4 +1,4 @@
-<div class="backWhite">
+<div class="backWhite" *ngIf="_web3.network.chain == 1">
     <h2 class="extra smash-secondary-color inlineBlock">Card payent information:</h2>
 
     <form (ngSubmit)="pay()" #form="ngForm" class="dist2">
